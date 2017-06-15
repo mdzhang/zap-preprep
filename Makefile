@@ -3,3 +3,6 @@ run:
 
 down:
 	docker rm -f $$(docker ps -aqf name=memcached)
+
+test:
+	@python hello_world.py
