@@ -12,11 +12,13 @@ from pymemcache.client.base import Client
 client = Client(('localhost', 11211))
 
 
+# s is bytes type
 def set_file(name, s):
   """store a file in memcache by its name"""
   client.set(name, s)
 
 
+# returns bytes type
 def get_file(name):
   """retrieve a file from memcache by its name"""
   return client.get(name)
@@ -26,19 +28,19 @@ def test_file():
     name = 'lorum_small.txt'
 
     infile_path = f'./fixtures/{name}'
-    with open(infile_path, 'r') as infile:
+    with open(infile_path, 'rb') as infile:
         data = infile.read()
 
     set_file(name, data)
     result = get_file(name)
 
     outfile_path = f'./fixtures/{name}.out'
-    with open(outfile_path, 'w') as outfile:
-        outfile.write(str(result))
+    with open(outfile_path, 'wb') as outfile:
+        outfile.write(result)
 
-    # assert checksum_file(infile_path) == checksum_file(outfile_path)
     print(checksum_file(infile_path))
     print(checksum_file(outfile_path))
+    assert checksum_file(infile_path) == checksum_file(outfile_path)
 
 
 def checksum_file(path):
