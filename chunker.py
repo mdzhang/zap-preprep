@@ -11,8 +11,6 @@ from pymemcache.client.base import Client
 
 client = Client(('localhost', 11211))
 
-# TODO: files with dupe names?
-
 
 # s is bytes type
 def set_file(name, s):
@@ -46,8 +44,20 @@ def set_file(name, s):
 
 # returns bytes type
 def get_file(name):
-  """retrieve a file from memcache by its name"""
-  return client.get(name)
+    """retrieve a file from memcache by its name"""
+    md5 = client.get(name)
+
+    keys = client.get(f'{md5}:keys')
+
+    chunks = []
+
+    for key in keys:
+        chunks.append(client.get(key))
+
+    # TODO: fix this for bytes
+    data = b''.join(chunks)
+
+    return data
 
 
 def test_file():
